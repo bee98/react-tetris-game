@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Shapes from '../../shapes';
 import PlayArea from '../PlayArea'
 import ResultArea from '../ResultArea'
-import { moveLeft, moveRight, moveDown, rotate } from '../Action/Actions'
+import { moveLeft, moveRight, moveDown, rotateMove } from '../Action/Actions'
 import './Field.css'
 
 class Field extends Component {
@@ -37,14 +37,14 @@ class Field extends Component {
         document.addEventListener('keydown', (e) => { moveLeft(e, this.state.currentFigure, this.state.field, this.addCurrentFigure.bind(this), this.updateField.bind(this)) }, false)
         document.addEventListener('keydown', (e) => { moveRight(e, this.state.fieldWidth, this.state.currentFigure, this.state.field, this.addCurrentFigure.bind(this), this.updateField.bind(this)) }, false)
         document.addEventListener('keydown', (e) => { moveDown(e, this.state.currentFigure, this.addSpeed.bind(this), this.state.interval, this.loop.bind(this)) }, false)
-        document.addEventListener('keydown', (e) => { rotate(e, this.state.currentFigure, this.addRotate.bind(this))}, false)
+        document.addEventListener('keydown', (e) => { rotateMove(e, this.state.currentFigure, this.addRotate.bind(this))}, false)
     }
 
     componentWillUnmount() {
         document.removeEventListener('keydown', (e) => { moveLeft(e, this.state.currentFigure, this.state.field, this.addCurrentFigure.bind(this), this.updateField.bind(this)) }, false)
         document.removeEventListener('keydown', (e) => { moveRight(e, this.state.fieldWidth, this.state.currentFigure, this.state.field, this.addCurrentFigure.bind(this), this.updateField.bind(this)) }, false)
         document.removeEventListener('keydown', (e) => { moveDown(e, this.state.currentFigure, this.addSpeed.bind(this), this.state.interval, this.loop.bind(this)) }, false)
-        document.removeEventListener('keydown', (e) => { rotate(e, this.state.currentFigure, this.addRotate.bind(this))}, false)
+        document.removeEventListener('keydown', (e) => { rotateMove(e, this.state.currentFigure, this.addRotate.bind(this))}, false)
     }
 
 
@@ -66,6 +66,7 @@ class Field extends Component {
     moveFigure() {
         let freezeFlag = false;
 
+        console.log("ASFAS", this.state.currentFigure)
         if (this.state.stepCounter % 3 === 0) {
             if (this.state.currentFigure) {
                 if (!this.state.nextFigure) {
@@ -127,15 +128,6 @@ class Field extends Component {
             this.rotateFigure()
         }
         this.updateField()
-    }
-
-    rotate(e) {
-        if (e.keyCode !== 38 || !this.state.currentFigure) {
-            return null
-        }
-        this.setState({
-            rotate: true
-        })
     }
 
     rotateFigure() {

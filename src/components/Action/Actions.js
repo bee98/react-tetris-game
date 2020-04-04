@@ -56,7 +56,7 @@ export const moveRight = (e, fieldWidth, currentFigure, field, addCurrentFigure,
     }
 }
 
-export const rotate = (e, currentFigure, addRotate) => {
+export const rotateMove = (e, currentFigure, addRotate) => {
     if (e.keyCode !== 38 || !currentFigure) {
         return null
     }
