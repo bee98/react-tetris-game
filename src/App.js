@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import Field from './components/Field/Field'
 import './App.css';
 

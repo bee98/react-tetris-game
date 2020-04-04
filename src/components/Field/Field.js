@@ -1,7 +1,8 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import Shapes from '../../shapes';
 import PlayArea from '../PlayArea'
 import ResultArea from '../ResultArea'
+import { moveLeft, moveRight, moveDown, rotate } from '../Action/Actions'
 import './Field.css'
 
 class Field extends Component {
@@ -33,18 +34,19 @@ class Field extends Component {
         this.flushField()
         this.initFigures()
         this.loop()
-        document.addEventListener('keydown', this.moveLeft.bind(this), false)
-        document.addEventListener('keydown', this.moveRight.bind(this), false)
-        document.addEventListener('keydown', this.moveDown.bind(this), false)
-        document.addEventListener('keydown', this.rotate.bind(this), false)
+        document.addEventListener('keydown', (e) => { moveLeft(e, this.state.currentFigure, this.state.field, this.addCurrentFigure.bind(this), this.updateField.bind(this)) }, false)
+        document.addEventListener('keydown', (e) => { moveRight(e, this.state.fieldWidth, this.state.currentFigure, this.state.field, this.addCurrentFigure.bind(this), this.updateField.bind(this)) }, false)
+        document.addEventListener('keydown', (e) => { moveDown(e, this.state.currentFigure, this.addSpeed.bind(this), this.state.interval, this.loop.bind(this)) }, false)
+        document.addEventListener('keydown', (e) => { rotate(e, this.state.currentFigure, this.addRotate.bind(this))}, false)
     }
 
     componentWillUnmount() {
-        document.removeEventListener('keydown', this.moveLeft.bind(this), false)
-        document.removeEventListener('keydown', this.moveRight.bind(this), false)
-        document.removeEventListener('keydown', this.moveDown.bind(this), false)
-        document.removeEventListener('keydown', this.rotate.bind(this), false)
+        document.removeEventListener('keydown', (e) => { moveLeft(e, this.state.currentFigure, this.state.field, this.addCurrentFigure.bind(this), this.updateField.bind(this)) }, false)
+        document.removeEventListener('keydown', (e) => { moveRight(e, this.state.fieldWidth, this.state.currentFigure, this.state.field, this.addCurrentFigure.bind(this), this.updateField.bind(this)) }, false)
+        document.removeEventListener('keydown', (e) => { moveDown(e, this.state.currentFigure, this.addSpeed.bind(this), this.state.interval, this.loop.bind(this)) }, false)
+        document.removeEventListener('keydown', (e) => { rotate(e, this.state.currentFigure, this.addRotate.bind(this))}, false)
     }
+
 
     flushField() {
         let newField = [];
@@ -54,11 +56,11 @@ class Field extends Component {
                 newField[i][j] = '';
             }
         }
-        this.setState({field: newField})
+        this.setState({ field: newField })
     }
 
     initFigures() {
-        this.setState({figures: Shapes})
+        this.setState({ figures: Shapes })
     }
 
     moveFigure() {
@@ -127,53 +129,6 @@ class Field extends Component {
         this.updateField()
     }
 
-    moveLeft(e) {
-        if (e.keyCode !== 37 || !this.state.currentFigure) {
-            return null
-        }
-        let canBeShifted = true;
-        this.state.currentFigure.map(item => {
-            if (!(item[0] - 1 >= 0) || this.state.field[item[1]][item[0] - 1] === 'fill') {
-                canBeShifted = false;
-            }
-        })
-        if (canBeShifted) {
-            this.setState({
-                currentFigure: this.state.currentFigure.map(item => [item[0] - 1, item[1]])
-            })
-            this.updateField()
-        }
-    }
-
-    moveRight(e) {
-        if (e.keyCode !== 39 || !this.state.currentFigure) {
-            return null
-        }
-        let canBeShifted = true;
-        this.state.currentFigure.map(item => {
-            if (!(item[0] + 1 < this.state.fieldWidth) || this.state.field[item[1]][item[0] + 1] === 'fill') {
-                canBeShifted = false;
-            }
-        })
-        if (canBeShifted) {
-            this.setState({
-                currentFigure: this.state.currentFigure.map(item => [item[0] + 1, item[1]])
-            })
-            this.updateField()
-        }
-    }
-
-    moveDown(e) {
-        if (e.keyCode !== 40 || !this.state.currentFigure) {
-            return null
-        }
-        this.setState({
-            speed: this.state.fastSpeed
-        })
-        window.clearInterval(this.state.interval)
-        this.loop()
-    }
-
     rotate(e) {
         if (e.keyCode !== 38 || !this.state.currentFigure) {
             return null
@@ -221,7 +176,7 @@ class Field extends Component {
         this.setState({
             field: activeField,
             rotate: false,
-            stepCounter: this.state.stepCounter + 1
+            stepCounter: this.state.stepCounter + 2
         })
     }
 
@@ -266,14 +221,39 @@ class Field extends Component {
         })
     }
 
+    addCurrentFigure(direction) {
+        if (direction === "left") {
+            this.setState({
+                currentFigure: this.state.currentFigure.map(item => [item[0] - 1, item[1]])
+            })
+        }
+        if (direction === "right") {
+            this.setState({
+                currentFigure: this.state.currentFigure.map(item => [item[0] + 1, item[1]])
+            })
+        }
+    }
+
+    addSpeed() {
+        this.setState({
+            speed: this.state.fastSpeed
+        })
+    }
+
+    addRotate() {
+        this.setState({
+            rotate: true
+        })
+    }
+
     render() {
         return (
             <div className="wrapper">
-                <PlayArea field={this.state.field}/>
-                <ResultArea 
-                    gameOver={this.state.gameOver} 
-                    score={this.state.score} 
-                    nextFigure={this.state.nextFigure} 
+                <PlayArea field={this.state.field} />
+                <ResultArea
+                    gameOver={this.state.gameOver}
+                    score={this.state.score}
+                    nextFigure={this.state.nextFigure}
                     fieldWidth={this.state.fieldWidth}
                 />
             </div>
