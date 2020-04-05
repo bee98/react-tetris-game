@@ -1,14 +1,22 @@
 import React from 'react'
 import Cell from '../Cell/Cell'
 
-function Row(props) {
+class Row extends React.Component{
+  
+   constructor(props){
+      super(props);
+
+      }  
+  render()
+   {
     return (
         <div className="row">
-            {props.row.map((cell, i) =>
+            {this.props.row.map((cell, i) =>
                 <Cell key={i} cell={cell}/>
             )}
         </div>
     )
+}
 }
 
 export default Row
